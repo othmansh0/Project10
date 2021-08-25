@@ -50,5 +50,41 @@ class ViewController: UICollectionViewController,UIImagePickerControllerDelegate
     
     
     
+    
+    //steps:
+    //1-Extract the image from the dictionary that is passed as a parameter
+    //This dictionary parameter will contain key: .editedImage
+    //We don't know if this value exists as a UIImage, so we can't just extract it. Instead, we need to use an optional method of typecasting, as?
+    
+    //2-we need to generate a unique filename for every image we import.so that we can copy it to our app's space on the disk without overwriting anything even if user delete it we would still hae a copy we're going to use a new type for this, called UUID
+    
+    //3-After having the image and a path where we want to save it
+    //  we need to convert the UIImage to a data object so it can be saved
+    
+    
+    //which returns when the user selected an image and it's being returned to you
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        //1-
+        
+        guard let image = info[.editedImage] as? UIImage else { return }
+        
+        //create an UUID object, and use its uuidString property to extract the unique identifier as a string
+        let imageName = UUID().uuidString
+       //appendingPathComponent().Used when working with file paths, and adds one string (imageName) to a path, including whatever path separator is used on the platform
+        let imagePath = getDocumentsDirectory().appendingPathComponent(imageName)
+        
+        if let jpegData = image.jpegData(compressionQuality: 0.8){
+            try? jpegData.write(to: imagePath)
+        }
+        
+        dismiss(animated: true)
+        
+    }
+    
+    func getDocumentsDirectory() -> URL {
+        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+        return paths[0]
+    }
+    
 }
 
