@@ -6,11 +6,15 @@
 //
 
 import UIKit
+//UIImagePickerControllerDelegate: Tell us when the user either selected a picture or cancelled the picker
 
-class ViewController: UICollectionViewController {
+//UINavigationControllerDelegate:
+
+class ViewController: UICollectionViewController,UIImagePickerControllerDelegate,UINavigationControllerDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addNewPerson))
     
     }
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -31,5 +35,20 @@ class ViewController: UICollectionViewController {
     }
 
 
+    @objc func addNewPerson(){
+        let picker = UIImagePickerController()
+        picker.allowsEditing = true
+        
+        //means we respond to messages from the picker
+        //but we must conform to 2 procols
+        picker.delegate = self
+        present(picker,animated: true)
+        
+        
+    }
+    
+    
+    
+    
 }
 
