@@ -12,11 +12,11 @@ import UIKit
 
 class ViewController: UICollectionViewController,UIImagePickerControllerDelegate,UINavigationControllerDelegate {
     var people = [Person]()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addNewPerson))
-    
+        
     }
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return people.count
@@ -29,7 +29,7 @@ class ViewController: UICollectionViewController,UIImagePickerControllerDelegate
             // we failed to get a PersonCell – bail out!
             fatalError("Unable to deuque PersonCell")
         }
-       
+        
         //1.Pull out the person from the people array at the correct position
         let person = people[indexPath.item]
         //2.Set the name label to the person's name
@@ -49,23 +49,56 @@ class ViewController: UICollectionViewController,UIImagePickerControllerDelegate
     
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let ac = UIAlertController(title: "Add name", message: nil, preferredStyle: .alert)
-        ac.addTextField()
-        let action = UIAlertAction(title: "Add", style: .default) {[weak self,weak ac]
+        let ac = UIAlertController(title: "Please Choose", message: nil, preferredStyle: .actionSheet)
+        
+        
+        let action = UIAlertAction(title: "Rename Person", style: .default) {[weak self]
             action in
-            guard let newName = ac?.textFields?[0].text else {return}
-            self?.people[indexPath.item].name = newName
-            collectionView.reloadData()
+            let ac2 = UIAlertController(title: "Add a person", message: nil, preferredStyle: .alert)
+            ac2.addTextField()
+            
+            let addAction = UIAlertAction(title: "Add", style: .default){[weak self,weak ac2] action in
+                guard let newName = ac2?.textFields?[0].text else {return}
+                self?.people[indexPath.item].name = newName
+                collectionView.reloadData()
+                
+            }
+            
+            let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
+            ac2.addAction(cancelAction)
+            ac2.addAction(addAction)
+            
+            self?.present(ac2, animated: true, completion: nil)
+            
             
         }
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
+        
+                let deleteAction = UIAlertAction(title: "Delete", style: .destructive){ [weak self]
+                    action in
+                    self?.people.remove(at: indexPath.item)
+                    collectionView.reloadData()
+        
+                }
+        
+        
         ac.addAction(action)
-        ac.addAction(cancelAction)
-        present(ac, animated: true)
-      
+        ac.addAction(deleteAction)
+        
+        
+        present(ac, animated: true, completion: nil)
+        
+        
+        
+     
+        
+        
+        //        ac2.addAction(deleteAction)
+        
+        
+        
     }
-
-
+    
+    
     @objc func addNewPerson(){
         let picker = UIImagePickerController()
         picker.allowsEditing = true
@@ -101,7 +134,7 @@ class ViewController: UICollectionViewController,UIImagePickerControllerDelegate
         
         //create an UUID object, and use its uuidString property to extract the unique identifier as a string
         let imageName = UUID().uuidString
-       //appendingPathComponent().Used when working with file paths, and adds one string (imageName) to a path, including whatever path separator is used on the platform
+        //appendingPathComponent().Used when working with file paths, and adds one string (imageName) to a path, including whatever path separator is used on the platform
         let imagePath = getDocumentsDirectory().appendingPathComponent(imageName)
         
         if let jpegData = image.jpegData(compressionQuality: 0.8){
