@@ -102,6 +102,8 @@ class ViewController: UICollectionViewController,UIImagePickerControllerDelegate
     @objc func addNewPerson(){
         let picker = UIImagePickerController()
         picker.allowsEditing = true
+
+        
         
         //means we respond to messages from the picker
         //but we must conform to 2 procols
@@ -136,7 +138,7 @@ class ViewController: UICollectionViewController,UIImagePickerControllerDelegate
         let imageName = UUID().uuidString
         //appendingPathComponent().Used when working with file paths, and adds one string (imageName) to a path, including whatever path separator is used on the platform
         let imagePath = getDocumentsDirectory().appendingPathComponent(imageName)
-        
+        //Converting UIImage to a data object so it can be saved
         if let jpegData = image.jpegData(compressionQuality: 0.8){
             try? jpegData.write(to: imagePath)
         }
