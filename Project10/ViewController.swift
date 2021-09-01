@@ -10,6 +10,17 @@ import UIKit
 
 //UINavigationControllerDelegate:
 
+
+//UserDefaults to store any basic data < 100KB
+//you can save any kind of data inside UserDefaults as long as you follow some rules:
+
+// Use archivedData() method which turns an object graph into a data object then write that to UserDefaults
+//“object graph” means “your object, plus any objects it refers to
+
+//1.All your data types must be one of the following: boolean, integer, float, double, string, array, dictionary, Date, or a class that fits rule 2.
+//2.If your data type is a class, it must conform to the NSCoding protocol, which is used for archiving object graphs.
+//3.If your data type is an array or dictionary, all the keys and values must match rule 1 or rule 2.
+
 class ViewController: UICollectionViewController,UIImagePickerControllerDelegate,UINavigationControllerDelegate {
     var people = [Person]()
     
