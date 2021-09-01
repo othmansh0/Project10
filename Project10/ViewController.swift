@@ -14,7 +14,7 @@ import UIKit
 //UserDefaults to store any basic data < 100KB
 //you can save any kind of data inside UserDefaults as long as you follow some rules:
 
-// Use archivedData() method which turns an object graph into a data object then write that to UserDefaults
+// Use archivedData() method which turns an object graph into a Data object then write that to UserDefaults
 //“object graph” means “your object, plus any objects it refers to
 
 //1.All your data types must be one of the following: boolean, integer, float, double, string, array, dictionary, Date, or a class that fits rule 2.
@@ -28,6 +28,15 @@ class ViewController: UICollectionViewController,UIImagePickerControllerDelegate
         super.viewDidLoad()
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addNewPerson))
         
+        let defaults = UserDefaults.standard
+        //we use object(forKey:) method to pull out an optional Data
+        if let savedPeople = defaults.object(forKey: "people") as? Data {
+            //convert it back to an object graph
+            if let decodedPeople = try? NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(savedPeople) as? [Person]{
+                people = decodedPeople
+            }
+        }
+      
     }
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return people.count
@@ -71,6 +80,7 @@ class ViewController: UICollectionViewController,UIImagePickerControllerDelegate
             let addAction = UIAlertAction(title: "Add", style: .default){[weak self,weak ac2] action in
                 guard let newName = ac2?.textFields?[0].text else {return}
                 self?.people[indexPath.item].name = newName
+                self?.save()
                 collectionView.reloadData()
                 
             }
@@ -97,13 +107,7 @@ class ViewController: UICollectionViewController,UIImagePickerControllerDelegate
         
         
         present(ac, animated: true, completion: nil)
-        
-        
-        
      
-        
-        
-        //        ac2.addAction(deleteAction)
         
         
         
@@ -156,6 +160,7 @@ class ViewController: UICollectionViewController,UIImagePickerControllerDelegate
         
         let person = Person(name: "Othman", image: imageName)
         people.append(person)
+        save()
         collectionView.reloadData()
         
         dismiss(animated: true)
@@ -165,6 +170,16 @@ class ViewController: UICollectionViewController,UIImagePickerControllerDelegate
     func getDocumentsDirectory() -> URL {
         let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
         return paths[0]
+    }
+    
+    func save(){
+        //converts array into a Data object
+        if let savedData = try? NSKeyedArchiver.archivedData(withRootObject: people, requiringSecureCoding: false){
+            //save data object to UserDefaults
+            let defaults = UserDefaults.standard
+            defaults.set(savedData, forKey: "people")
+            
+        }
     }
     
 }
